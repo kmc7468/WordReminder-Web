@@ -5,7 +5,10 @@ const schema = new mongoose.Schema({
 	password: String,
 	token: String,
 
-	vocabularies: [mongoose.Schema.Types.ObjectId],
+	vocabularies: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "vocabulary",
+	}],
 });
 
 const AccountModel = mongoose.model("account", schema);

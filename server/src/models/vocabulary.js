@@ -25,6 +25,11 @@ const tagSchema = new mongoose.Schema({
 });
 
 const vocabularySchema = new mongoose.Schema({
+	account: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "account",
+	},
+
 	name: String,
 	time: Date,
 	words: [wordSchema],

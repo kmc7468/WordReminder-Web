@@ -4,6 +4,8 @@ const accountMiddleware = async (req, res, next) => {
 	const token = req.cookies.x_auth;
 	const result = await AccountModel.accountDBInst.loginByToken(token);
 	if (result.success) {
+		res.locals.user = result.data;
+
 		next();
 	} else {
 		res.status(401).json({ error: "Not loggged in" });

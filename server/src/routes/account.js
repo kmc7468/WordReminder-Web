@@ -60,7 +60,7 @@ class AccountDB {
 			const id = jwt.verify(token, "secretToken");
 			const user = await AccountModel.findOne({ _id: id });
 
-			if (user) return { success: true };
+			if (user) return { success: true, data: user };
 			else return { success: false, data: "Invalid token" };
 		} catch (e) {
 			console.log(`[AccountDB] loginByToken call failed: DB Error - ${ e }`);
