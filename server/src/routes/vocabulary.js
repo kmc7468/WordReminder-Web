@@ -69,11 +69,7 @@ class VocabularyDB {
 				}
 
 				const meaning = word.meanings.find((meaning) => meaning.meaning === content.meaning);
-				if (meaning) {
-					console.log(`[VocabularyDB] addMeaning call failed: Already exist meaning`);
-
-					return { success: false, data: "Already exist meaning" };
-				} else {
+				if (!meaning) {
 					word.meanings.push({
 						meaning: content.meaning,
 						pronunciation: content.pronunciation,
@@ -83,7 +79,7 @@ class VocabularyDB {
 					await vocabulary.save(); // TODO: 예외 처리 안됨
 
 					return { success: true };
-				}
+				} else return { success: false, data: "Already exist meaning" };
 			} else {
 				vocabulary.words.push({
 					word: content.word,
@@ -111,11 +107,7 @@ const vocabularyDBInst = VocabularyDB.getInst();
 router.post("/create", accountMiddleware, async (req, res) => {
 	try {
 		const name = req.body.vocabularyName;
-		if (!name || name.length === 0) {
-			console.log("[VocabularyRouter] create call failed: Empty vocabularyName");
-
-			return res.status(500).json({ error: "Empty vocabularyName" });
-		}
+		if (!name || name.length === 0) return res.status(400).json({ error: "Empty vocabularyName" });
 
 		const result = await vocabularyDBInst.create(res.locals.user, name);
 
@@ -135,28 +127,16 @@ router.post("/create", accountMiddleware, async (req, res) => {
 router.post("/addMeaning", accountMiddleware, async (req, res) => {
 	try {
 		const id = req.body.vocabularyId;
-		if (!id || id.length === 0) {
-			console.log("[VocabularyRouter] addMeaning call failed: Empty vocabularyId");
-
-			return res.status(500).json({ error: "Empty vocabularyId" });
-		}
+		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
 
 		const vocabulary = await vocabularyDBInst.get(id);
-		if (!vocabulary.success) return res.status(500).json({ error: vocabulary.data });
+		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
 
 		const word = req.body.word;
-		if (!word || word.length === 0) {
-			console.log("[VocabularyRouter] addMeaning call failed: Empty word");
-
-			return res.status(500).json({ error: "Empty word" });
-		}
+		if (!word || word.length === 0) return res.status(400).json({ error: "Empty word" });
 
 		const meaning = req.body.meaning;
-		if (!meaning || meaning.length === 0) {
-			console.log("[VocabularyRouter] addMeaning call failed: Empty meaning");
-
-			return res.status(500).json({ error: "Empty meaning" });
-		}
+		if (!meaning || meaning.length === 0) return res.status(400).json({ error: "Empty meaning" });
 
 		let pronunciation = req.body.pronunciation;
 		if (!pronunciation || pronunciation && pronunciation.length === 0) {

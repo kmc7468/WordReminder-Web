@@ -75,18 +75,10 @@ const accountDBInst = AccountDB.getInst();
 router.post("/register", async (req, res) => {
 	try {
 		const username = req.body.username;
-		if (!username || username.length === 0) {
-			console.log("[AccountRouter] register call failed: Empty username");
-
-			return res.status(500).json({ error: "Empty username" });
-		}
+		if (!username || username.length === 0) return res.status(400).json({ error: "Empty username" });
 
 		const password = req.body.password;
-		if (!password || password.length === 0) {
-			console.log("[AccountRouter] register call failed: Empty password");
-
-			return res.status(500).json({ error: "Empty password" });
-		}
+		if (!password || password.length === 0) return res.status(400).json({ error: "Empty password" });
 
 		const saltRounds = 10;
 		const salt = bcrypt.genSaltSync(saltRounds);
@@ -106,18 +98,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
 	try {
 		const username = req.body.username;
-		if (!username || username.length === 0) {
-			console.log("[AccountRouter] login call failed: Empty username");
-
-			return res.status(500).json({ error: "Empty username" });
-		}
+		if (!username || username.length === 0) return res.status(400).json({ error: "Empty username" });
 
 		const password = req.body.password;
-		if (!password || password.length === 0) {
-			console.log("[AccountRouter] login call failed: Empty password");
-
-			return res.status(500).json({ error: "Empty password" });
-		}
+		if (!password || password.length === 0) return res.status(400).json({ error: "Empty password" });
 
 		const result = await accountDBInst.login(username, password);
 
