@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const meaningSchema = new mongoose.Schema({
-	word: mongoose.Schema.Types.ObjectId,
-
 	meaning: String,
 	pronunciation: String,
 	example: String,
@@ -10,15 +8,11 @@ const meaningSchema = new mongoose.Schema({
 });
 
 const wordSchema = new mongoose.Schema({
-	vocabulary: mongoose.Schema.Types.ObjectId,
-	
 	word: String,
 	meanings: [meaningSchema],
 });
 
 const tagSchema = new mongoose.Schema({
-	vocabulary: mongoose.Schema.Types.ObjectId,
-
 	tag: String,
 	words: [wordSchema],
 	meanings: [meaningSchema],
@@ -31,6 +25,10 @@ const vocabularySchema = new mongoose.Schema({
 	},
 
 	name: String,
+	version: {
+		type: Number,
+		default: 0,
+	},
 	time: Date,
 	words: [wordSchema],
 	tags: [tagSchema],
