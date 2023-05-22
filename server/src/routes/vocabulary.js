@@ -117,6 +117,36 @@ class VocabularyDB {
 			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
+
+	removeMeaning = async (vocabulary, wordString, meaningString) => {
+		try {
+			if (!vocabulary.words) return { success: false, code: 400, data: "Nonexist word" };
+
+			const word = vocabulary.words.find((word) => word.word === wordString);
+			if (!word) return { success: false, code: 400, data: "Nonexist word" };
+			if (!word.meanings) return { success: false, code: 400, data: "Nonexist meaning" };
+			
+			const meaningCount = word.meanings.length;
+
+			words.meanings = words.meanings.filter((meaning) => meaning.meaing !== meaningString);
+
+			if (words.meanings.length === 0) { // 단어 삭제
+				vocabulary.words = vocabulary.words.filter((word) => word.word !== wordString);
+
+				await vocabulary.save(); // TODO: 예외 처리 안됨
+
+				return { success: true };
+			} else if (words.meanings.length !== meaningCount) {
+				await vocabulary.save(); // TODO: 예외 처리 안됨
+
+				return { success: true };
+			} else return { success: false, code: 400, data: "Nonexist meaning" };
+		} catch (e) {
+			console.log(`[VocabularyDB] removeMeaning call failed: DB Error - ${ e }`);
+
+			return { success: false, code: 500, data: "DB Error" };
+		}
+	};
 };
 
 const vocabularyDBInst = VocabularyDB.getInst();
@@ -227,7 +257,7 @@ router.post("/addMeaning", accountMiddleware, async (req, res) => {
 	}
 });
 
-router.get("/getWords", accountMiddleware, async (req, res) => {
+router.post("/removeMeaning", accountMiddleware, async (req, res) => {
 	try {
 		const id = req.body.vocabularyId;
 		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
@@ -235,17 +265,23 @@ router.get("/getWords", accountMiddleware, async (req, res) => {
 		const vocabulary = await vocabularyDBInst.get(id);
 		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
-		const words = [];
+		const word = req.body.word;
+		if (!word || word.length === 0) return res.status(400).json({ error: "Empty word" });
 
-		if (vocabulary.data.words) {
-			for (let i = 0; i < vocabulary.data.words.length; ++i) {
-				words.push(vocabulary.data.words[i].word);
-			}
-		}
+		const meaning = req.body.meaning;
+		if (!meaning || meaning.length === 0) return res.status(400).json({ error: "Empty meaning" });
 
-		return res.status(200).json({ words });
+		const result = await vocabularyDBInst.removeMeaning(vocabulary.data, word, meaning);
+
+		if (result.success) {
+			++vocabulary.data.version;
+
+			await vocabulary.data.save(); // TODO: 예외 처리 안됨
+
+			return res.status(200).json({});
+		} else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
-		console.log(`[VocabularyRouter] getWords call failed: ${ e }`);
+		console.log(`[VocabularyRouter] removeMeaning call failed: ${ e }`);
 
 		return res.status(500).json({ error: e });
 	}
@@ -259,27 +295,30 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 		const vocabulary = await vocabularyDBInst.get(id);
 		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
-		const wordString = req.body.word;
-		if (!wordString || wordString.length === 0) return res.status(400).json({ error: "Empty word" });
-		if (!vocabulary.data.words) return res.status(400).json({ error: "Nonexist word" });
+		const words = [];
 
-		const word = vocabulary.data.words.find((word) => word.word === wordString);
-		if (!word) return res.status(400).json({ error: "Nonexist word" });
+		if (vocabulary.data.words) {
+			for (let i = 0; i < vocabulary.data.words.length; ++i) {
+				const word = vocabulary.data.words[i];
+				const meanings = [];
 
-		const meanings = [];
+				for (let j = 0; j < word.meanings.length; ++j) {
+					meanings.push({
+						meaning: word.meanings[j].meaning,
+						pronunciation: word.meanings[j].pronunciation,
+						example: word.meanings[j].example,
+						tags: word.meanings[j].tags,
+					});
+				}
 
-		if (word.meanings) {
-			for (let i = 0; i < word.meanings.length; ++i) {
-				meanings.push({
-					meaning: word.meanings[i].meaning,
-					pronunciation: word.meanings[i].pronunciation,
-					example: word.meanings[i].example,
-					tags: word.meanings[i].tags,
+				words.push({
+					word: word.word,
+					meanings,
 				});
 			}
 		}
 
-		return res.status(200).json({ meanings });
+		return res.status(200).json({ meanings: words });
 	} catch (e) {
 		console.log(`[VocabularyRouter] getMeanings call failed: ${ e }`);
 
