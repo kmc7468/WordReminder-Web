@@ -128,15 +128,15 @@ class VocabularyDB {
 			
 			const meaningCount = word.meanings.length;
 
-			words.meanings = words.meanings.filter((meaning) => meaning.meaing !== meaningString);
+			word.meanings = word.meanings.filter((meaning) => meaning.meaning !== meaningString);
 
-			if (words.meanings.length === 0) { // 단어 삭제
+			if (word.meanings.length === 0) { // 단어 삭제
 				vocabulary.words = vocabulary.words.filter((word) => word.word !== wordString);
 
 				await vocabulary.save(); // TODO: 예외 처리 안됨
 
 				return { success: true };
-			} else if (words.meanings.length !== meaningCount) {
+			} else if (word.meanings.length !== meaningCount) {
 				await vocabulary.save(); // TODO: 예외 처리 안됨
 
 				return { success: true };
