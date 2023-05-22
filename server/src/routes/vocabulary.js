@@ -124,6 +124,29 @@ router.post("/create", accountMiddleware, async (req, res) => {
 	}
 });
 
+router.get("/getVocabularies", accountMiddleware, async (req, res) => {
+	try {
+		const vocabularies = [];
+
+		for (let i = 0; i < res.locals.user.vocabularies.length; ++i) {
+			const vocabulary = await vocabularyDBInst.get(res.locals.user.vocabularies[i]);
+			if (!vocabulary.success) return res.status(500).json({ error: vocabulary.data });
+
+			vocabularies.push({
+				id: vocabulary.data._id.toHexString(),
+				name: vocabulary.data.name,
+				time: vocabulary.data.time,
+			});
+		}
+
+		return res.status(200).json({ vocabularies });
+	} catch (e) {
+		console.log(`[VocabularyRouter] getVocabularies call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
 router.post("/addMeaning", accountMiddleware, async (req, res) => {
 	try {
 		const id = req.body.vocabularyId;
@@ -164,6 +187,66 @@ router.post("/addMeaning", accountMiddleware, async (req, res) => {
 		} else return res.status(500).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] addMeaning call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
+router.get("/getWords", accountMiddleware, async (req, res) => {
+	try {
+		const id = req.body.vocabularyId;
+		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
+
+		const vocabulary = await vocabularyDBInst.get(id);
+		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
+
+		const words = [];
+
+		if (vocabulary.data.words) {
+			for (let i = 0; i < vocabulary.data.words.length; ++i) {
+				words.push(vocabulary.data.words[i].word);
+			}
+		}
+
+		return res.status(200).json({ words });
+	} catch (e) {
+		console.log(`[VocabularyRouter] getVocabularies call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
+router.get("/getMeanings", accountMiddleware, async (req, res) => {
+	try {
+		const id = req.body.vocabularyId;
+		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
+
+		const vocabulary = await vocabularyDBInst.get(id);
+		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
+
+		const wordString = req.body.word;
+		if (!wordString || wordString.length === 0) return res.status(400).json({ error: "Empty word" });
+		if (!vocabulary.data.words) return res.status(400).json({ error: "Nonexist word" });
+
+		const word = vocabulary.data.words.find((word) => word.word === wordString);
+		if (!word) return res.status(400).json({ error: "Nonexist word" });
+
+		const meanings = [];
+
+		if (word.meanings) {
+			for (let i = 0; i < word.meanings.length; ++i) {
+				meanings.push({
+					meaning: word.meanings[i].meaning,
+					pronunciation: word.meanings[i].pronunciation,
+					example: word.meanings[i].example,
+					tags: word.meanings[i].tags,
+				});
+			}
+		}
+
+		return res.status(200).json({ meanings });
+	} catch (e) {
+		console.log(`[VocabularyRouter] getVocabularies call failed: ${ e }`);
 
 		return res.status(500).json({ error: e });
 	}

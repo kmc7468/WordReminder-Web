@@ -4,7 +4,7 @@ const meaningSchema = new mongoose.Schema({
 	meaning: String,
 	pronunciation: String,
 	example: String,
-	tags: [mongoose.Schema.Types.ObjectId],
+	tags: [String],
 });
 
 const wordSchema = new mongoose.Schema({
