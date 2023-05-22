@@ -37,6 +37,23 @@ class VocabularyDB {
 		}
 	};
 
+	delete = async (id) => {
+		try {
+			const result = await VocabularyModel.deleteOne({ _id: id });
+			if (result.deletedCount === 1) return { success: true };
+			else {
+				const vocabulary = await VocabularyModel.findOne({ _id: id });
+
+				if (!vocabulary) return { success: false, data: "Nonexist vocabulary" };
+				else return { success: false, data: "DB Error" };
+			}
+		} catch (e) {
+			console.log(`[VocabularyDB] delete call failed: DB Error - ${ e }`);
+
+			return { success: false, data: "DB Error" };
+		}
+	}
+
 	get = async (id) => {
 		try {
 			const result = await VocabularyModel.findOne({ _id: id });
@@ -104,18 +121,36 @@ class VocabularyDB {
 
 const vocabularyDBInst = VocabularyDB.getInst();
 
-router.post("/create", accountMiddleware, async (req, res) => {
+router.post("/createVocabulary", accountMiddleware, async (req, res) => {
 	try {
 		const name = req.body.vocabularyName;
 		if (!name || name.length === 0) return res.status(400).json({ error: "Empty vocabularyName" });
 
 		const result = await vocabularyDBInst.create(res.locals.user, name);
-
 		if (result.success) {
 			res.locals.user.vocabularies.push(result.data._id);
 			await res.locals.user.save(); // TODO: 예외 처리 안됨
 
 			return res.status(200).json({ id: result.data._id.toHexString() });
+		} else return res.status(500).json({ error: result.data });
+	} catch (e) {
+		console.log(`[VocabularyRouter] createVocabulary call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
+router.post("/deleteVocabulary", accountMiddleware, async (req, res) => {
+	try {
+		const id = req.body.vocabularyId;
+		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
+
+		const result = await vocabularyDBInst.delete(id);
+		if (result.success) {
+			res.locals.user.vocabularies = res.locals.user.vocabularies.filter((voca) => voca.toHexString() !== id);
+			await res.locals.user.save(); // TODO: 예외 처리 안됨
+
+			return res.status(200).json({});
 		} else return res.status(500).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] create call failed: ${ e }`);
@@ -210,7 +245,7 @@ router.get("/getWords", accountMiddleware, async (req, res) => {
 
 		return res.status(200).json({ words });
 	} catch (e) {
-		console.log(`[VocabularyRouter] getVocabularies call failed: ${ e }`);
+		console.log(`[VocabularyRouter] getWords call failed: ${ e }`);
 
 		return res.status(500).json({ error: e });
 	}
@@ -246,7 +281,7 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 
 		return res.status(200).json({ meanings });
 	} catch (e) {
-		console.log(`[VocabularyRouter] getVocabularies call failed: ${ e }`);
+		console.log(`[VocabularyRouter] getMeanings call failed: ${ e }`);
 
 		return res.status(500).json({ error: e });
 	}
