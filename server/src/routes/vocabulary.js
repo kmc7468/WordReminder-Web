@@ -17,13 +17,13 @@ class VocabularyDB {
 
 	constructor() {
 		console.log("[VocabularyDB] DB initialization complete!");
-	}
+	};
 
 	create = async (user, name) => {
 		try {
 			for (let i = 0; i < user.vocabularies.length; ++i) {
 				const vocabulary = await VocabularyModel.findOne({ _id: user.vocabularies[i] });
-				if (vocabulary.name === name) return { success: false, data: "Already used vocabularyName" };
+				if (vocabulary.name === name) return { success: false, code: 400, data: "Already used vocabularyName" };
 			}
 
 			const newVocabulary = new VocabularyModel({ name, account: user._id });
@@ -33,7 +33,7 @@ class VocabularyDB {
 		} catch (e) {
 			console.log(`[VocabularyDB] create call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 
@@ -44,26 +44,26 @@ class VocabularyDB {
 			else {
 				const vocabulary = await VocabularyModel.findOne({ _id: id });
 
-				if (!vocabulary) return { success: false, data: "Nonexist vocabulary" };
-				else return { success: false, data: "DB Error" };
+				if (!vocabulary) return { success: false, code: 400, data: "Nonexist vocabulary" };
+				else return { success: false, code: 500, data: "DB Error" };
 			}
 		} catch (e) {
 			console.log(`[VocabularyDB] delete call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
-	}
+	};
 
 	get = async (id) => {
 		try {
 			const result = await VocabularyModel.findOne({ _id: id });
 
 			if (result) return { success: true, data: result };
-			else return { success: false, data: "Invalid vocabularyId" };
+			else return { success: false, code: 400, data: "Invalid vocabularyId" };
 		} catch (e) {
 			console.log(`[VocabularyDB] get call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 
@@ -96,7 +96,7 @@ class VocabularyDB {
 					await vocabulary.save(); // TODO: 예외 처리 안됨
 
 					return { success: true };
-				} else return { success: false, data: "Already exist meaning" };
+				} else return { success: false, code: 400, data: "Already exist meaning" };
 			} else {
 				vocabulary.words.push({
 					word: content.word,
@@ -114,7 +114,7 @@ class VocabularyDB {
 		} catch (e) {
 			console.log(`[VocabularyDB] addMeaning call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 };
@@ -132,7 +132,7 @@ router.post("/createVocabulary", accountMiddleware, async (req, res) => {
 			await res.locals.user.save(); // TODO: 예외 처리 안됨
 
 			return res.status(200).json({ id: result.data._id.toHexString() });
-		} else return res.status(500).json({ error: result.data });
+		} else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] createVocabulary call failed: ${ e }`);
 
@@ -151,7 +151,7 @@ router.post("/deleteVocabulary", accountMiddleware, async (req, res) => {
 			await res.locals.user.save(); // TODO: 예외 처리 안됨
 
 			return res.status(200).json({});
-		} else return res.status(500).json({ error: result.data });
+		} else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] create call failed: ${ e }`);
 
@@ -165,7 +165,7 @@ router.get("/getVocabularies", accountMiddleware, async (req, res) => {
 
 		for (let i = 0; i < res.locals.user.vocabularies.length; ++i) {
 			const vocabulary = await vocabularyDBInst.get(res.locals.user.vocabularies[i]);
-			if (!vocabulary.success) return res.status(500).json({ error: vocabulary.data });
+			if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
 			vocabularies.push({
 				id: vocabulary.data._id.toHexString(),
@@ -188,7 +188,7 @@ router.post("/addMeaning", accountMiddleware, async (req, res) => {
 		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
 
 		const vocabulary = await vocabularyDBInst.get(id);
-		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
+		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
 		const word = req.body.word;
 		if (!word || word.length === 0) return res.status(400).json({ error: "Empty word" });
@@ -219,7 +219,7 @@ router.post("/addMeaning", accountMiddleware, async (req, res) => {
 			await vocabulary.data.save(); // TODO: 예외 처리 안됨
 
 			return res.status(200).json({});
-		} else return res.status(500).json({ error: result.data });
+		} else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] addMeaning call failed: ${ e }`);
 
@@ -233,7 +233,7 @@ router.get("/getWords", accountMiddleware, async (req, res) => {
 		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
 
 		const vocabulary = await vocabularyDBInst.get(id);
-		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
+		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
 		const words = [];
 
@@ -257,7 +257,7 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
 
 		const vocabulary = await vocabularyDBInst.get(id);
-		if (!vocabulary.success) return res.status(400).json({ error: vocabulary.data });
+		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
 		const wordString = req.body.word;
 		if (!wordString || wordString.length === 0) return res.status(400).json({ error: "Empty word" });

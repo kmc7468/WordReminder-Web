@@ -23,7 +23,7 @@ class AccountDB {
 	register = async (username, password) => {
 		try {
 			const user = await AccountModel.findOne({ username });
-			if (user !== null) return { success: false, data: "Already used username" }; // 계정 중복 확인
+			if (user !== null) return { success: false, code: 400, data: "Already used username" }; // 계정 중복 확인
 
 			const newUser = new AccountModel({ username, password }); // password는 해싱되어 있어야 함
 			await newUser.save(); // TODO: 예외 처리 안됨
@@ -32,17 +32,17 @@ class AccountDB {
 		} catch (e) {
 			console.log(`[AccountDB] register call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 
 	login = async (username, password) => {
 		try {
 			const user = await AccountModel.findOne({ username });
-			if (user === null) return { success: false, data: "Nonexist username" };
+			if (user === null) return { success: false, code: 400, data: "Nonexist username" };
 
 			const result = bcrypt.compareSync(password, user.password);
-			if (!result) return { success: false, data: "Incorrect password" };
+			if (!result) return { success: false, code: 400, data: "Incorrect password" };
 
 			user.token = jwt.sign(user._id.toHexString(), "secretToken");
 			await user.save(); // TODO: 예외 처리 안됨
@@ -51,7 +51,7 @@ class AccountDB {
 		} catch (e) {
 			console.log(`[AccountDB] login call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 
@@ -61,11 +61,11 @@ class AccountDB {
 			const user = await AccountModel.findOne({ _id: id });
 
 			if (user) return { success: true, data: user };
-			else return { success: false, data: "Invalid token" };
+			else return { success: false, code: 400, data: "Invalid token" };
 		} catch (e) {
 			console.log(`[AccountDB] loginByToken call failed: DB Error - ${ e }`);
 
-			return { success: false, data: "DB Error" };
+			return { success: false, code: 500, data: "DB Error" };
 		}
 	};
 };
@@ -87,7 +87,7 @@ router.post("/register", async (req, res) => {
 		const result = await accountDBInst.register(username, hash);
 
 		if (result.success) return res.status(200).json({});
-		else return res.status(500).json({ error: result.data });
+		else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[AccountRouter] register call failed: ${ e }`);
 
@@ -106,7 +106,7 @@ router.post("/login", async (req, res) => {
 		const result = await accountDBInst.login(username, password);
 
 		if (result.success) return res.cookie("x_auth", result.token).status(200).json({});
-		else return res.status(500).json({ error: result.data });
+		else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[AccountRouter] login call failed: ${ e }`);
 
