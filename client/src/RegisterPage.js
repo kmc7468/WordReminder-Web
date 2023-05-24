@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
+	const [cookies, setCookies] = useCookies([ "x_auth" ]);
 	const movePage = useNavigate();
 
 	const register = () => {
@@ -32,7 +34,8 @@ const RegisterPage = () => {
 
 	return (
 		<div className="RegisterPage">
-			<div className="title">
+			{cookies.x_auth === undefined ? (<>
+				<div className="title">
 				<h1>회원가입</h1>
 				<h3>회원가입 후 WordReminder Web의 모든 기능을 무료로 이용할 수 있습니다.</h3>
 				<h3>주의사항: 다른 사이트에서 사용한 비밀번호를 여기에서 사용하지 마세요.</h3>
@@ -48,8 +51,14 @@ const RegisterPage = () => {
 				<input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} />
 				<br />
 
-				<button type="submit" id="register" onClick={() => register()}>회원가입</button>
+				<button type="button" id="register" onClick={() => register()}>회원가입</button>
 			</div>
+			</>) : (<>
+				<div className="title">
+					<h1>회원가입</h1>
+					<h3>이미 WordReminder Web에 로그인되어 있습니다.</h3>
+				</div>
+			</>)}
 		</div>
 	);
 };
