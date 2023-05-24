@@ -51,7 +51,7 @@ const RegisterPage = () => {
 				<input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} />
 				<br />
 
-				<button type="button" id="register" onClick={() => register()}>회원가입</button>
+				<button type="button" id="register" onClick={register}>회원가입</button>
 			</div>
 			</>) : (<>
 				<div className="title">
