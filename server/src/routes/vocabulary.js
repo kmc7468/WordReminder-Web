@@ -1,9 +1,16 @@
 const express = require("express");
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
 const VocabularyModel = require("../models/vocabulary");
+const vocabularyParser = require("../utility/vocabularyParser");
 
 const accountMiddleware = require("../middleware/account");
 
 const router = express.Router();
+const upload = multer({
+	dest: __dirname + "/files/",
+});
 
 class VocabularyDB {
 	static _inst_;
@@ -26,7 +33,7 @@ class VocabularyDB {
 				if (vocabulary.name === name) return { success: false, code: 400, data: "Already used vocabularyName" };
 			}
 
-			const newVocabulary = new VocabularyModel({ name, account: user._id });
+			const newVocabulary = new VocabularyModel({ name, account: user._id, words: [], tags: [] });
 			await newVocabulary.save(); // TODO: 예외 처리 안됨
 
 			return { success: true, data: newVocabulary };
@@ -71,26 +78,15 @@ class VocabularyDB {
 	// content 선택 항목: pronunciation, example
 	addMeaning = async (vocabulary, content) => {
 		try {
-			if (!vocabulary.words) {
-				vocabulary.words = [];
-
-				await vocabulary.save(); // TODO: 예외 처리 안됨
-			}
-
 			const word = vocabulary.words.find((word) => word.word === content.word);	
 			if (word) {
-				if (!word.meanings) {
-					word.meanings = [];
-
-					await vocabulary.save(); // TODO: 예외 처리 안됨
-				}
-
 				const meaning = word.meanings.find((meaning) => meaning.meaning === content.meaning);
 				if (!meaning) {
 					word.meanings.push({
 						meaning: content.meaning,
 						pronunciation: content.pronunciation,
 						example: content.example,
+						tags: [],
 					});
 
 					await vocabulary.save(); // TODO: 예외 처리 안됨
@@ -104,7 +100,9 @@ class VocabularyDB {
 						meaning: content.meaning,
 						pronunciation: content.pronunciation,
 						example: content.example,
-					}]
+						tags: [],
+					}],
+					relations: [],
 				});
 
 				await vocabulary.save(); // TODO: 예외 처리 안됨
@@ -120,11 +118,8 @@ class VocabularyDB {
 
 	removeMeaning = async (vocabulary, wordString, meaningString) => {
 		try {
-			if (!vocabulary.words) return { success: false, code: 400, data: "Nonexist word" };
-
 			const word = vocabulary.words.find((word) => word.word === wordString);
 			if (!word) return { success: false, code: 400, data: "Nonexist word" };
-			if (!word.meanings) return { success: false, code: 400, data: "Nonexist meaning" };
 			
 			const meaningCount = word.meanings.length;
 
@@ -165,6 +160,80 @@ router.post("/createVocabulary", accountMiddleware, async (req, res) => {
 		} else return res.status(result.code).json({ error: result.data });
 	} catch (e) {
 		console.log(`[VocabularyRouter] createVocabulary call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
+router.post("/uploadVocabulary", accountMiddleware, upload.single("file"), async (req, res) => {
+	const filePath = path.resolve(req.file.destination, req.file.filename);
+	let fileDeleted = false;
+
+	try {
+		const name = req.body.vocabularyName;
+		if (!name || name.length === 0) return res.status(400).json({ error: "Empty vocabularyName" });
+
+		const vocabulary = await vocabularyParser(filePath);
+
+		fileDeleted = true;
+		fs.unlinkSync(filePath);
+
+		const result = await vocabularyDBInst.create(res.locals.user, name);
+		if (result.success) {
+			res.locals.user.vocabularies.push(result.data._id);
+			await res.locals.user.save(); // TODO: 예외 처리 안됨
+
+			vocabulary.words.forEach((word) => {
+				const meanings = [];
+				
+				word.meanings.forEach((meaning) => {
+					meanings.push({
+						meaning: meaning.meaning,
+						pronunciation: meaning.pronunciation,
+						example: meaning.example,
+						tags: [],
+					});
+				});
+
+				result.data.words.push({
+					word: word.word,
+					meanings,
+					relations: [],
+				});
+
+				word.object = result.data.words.at(-1);
+
+				for (let i = 0; i < word.meanings.length; ++i) {
+					word.meanings[i].object = word.object.meanings[i];
+				}
+			});
+
+			result.data.tags = vocabulary.tags;
+
+			vocabulary.words.forEach((word) => {
+				word.meanings.forEach((meaning) => {
+					meaning.tags.forEach((tag) => {
+						meaning.object.tags.push(result.data.tags[tag]);
+					});
+				});
+				word.relations.forEach((relation) => {
+					word.object.relations.push({
+						word: result.data.words[relation.word].word,
+						relation: relation.relation,
+					});
+				});
+			});
+
+			await result.data.save(); // TODO: 예외 처리 안됨
+
+			return res.status(200).json({ id: result.data._id.toHexString() });
+		} else return res.status(result.code).json({ error: result.data });
+	} catch (e) {
+		console.log(`[VocabularyRouter] uploadVocabulary call failed: ${ e }`);
+
+		if (!fileDeleted) {
+			fs.unlinkSync(filePath);
+		}
 
 		return res.status(500).json({ error: e });
 	}
@@ -297,7 +366,7 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 
 		const words = [];
 
-		if (vocabulary.data.words) {
+		//if (vocabulary.data.words) {
 			for (let i = 0; i < vocabulary.data.words.length; ++i) {
 				const word = vocabulary.data.words[i];
 				const meanings = [];
@@ -316,7 +385,7 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 					meanings,
 				});
 			}
-		}
+		//}
 
 		return res.status(200).json({ meanings: words });
 	} catch (e) {

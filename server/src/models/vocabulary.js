@@ -7,15 +7,15 @@ const meaningSchema = new mongoose.Schema({
 	tags: [String],
 });
 
+const relationSchema = new mongoose.Schema({
+	word: String,
+	relation: String,
+});
+
 const wordSchema = new mongoose.Schema({
 	word: String,
 	meanings: [meaningSchema],
-});
-
-const tagSchema = new mongoose.Schema({
-	tag: String,
-	words: [wordSchema],
-	meanings: [meaningSchema],
+	relations: [relationSchema],
 });
 
 const vocabularySchema = new mongoose.Schema({
@@ -30,8 +30,9 @@ const vocabularySchema = new mongoose.Schema({
 		default: 0,
 	},
 	time: Date,
+
 	words: [wordSchema],
-	tags: [tagSchema],
+	tags: [String],
 });
 
 const VocabularyModel = mongoose.model("vocabulary", vocabularySchema);
