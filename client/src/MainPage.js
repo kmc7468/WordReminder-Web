@@ -49,6 +49,10 @@ const MainPage = () => {
 			});
 	};
 
+	const importVocabulary = () => {
+		movePage("./import");
+	};
+
 	return (
 		<div className="MainPage">
 			{cookies.x_auth === undefined ? <Navigate to="./login" /> : <></>}
@@ -61,7 +65,7 @@ const MainPage = () => {
 			<div className="tools">
 				<button id="logout" onClick={logout}>로그아웃</button>
 				<button id="createVocabulary" onClick={createVocabulary}>단어장 만들기</button>
-				<button id="importVocabulary">단어장 파일 가져오기</button>
+				<button id="importVocabulary" onClick={importVocabulary}>단어장 파일 가져오기</button>
 			</div>
 
 			<div className="vocabularies">
