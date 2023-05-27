@@ -7,3 +7,8 @@
 	float: right;
 	width: 60%;
 }
+
+.word .newMeaning {
+	margin-top: 10px;
+	background-color: gainsboro;
+}
