@@ -1,0 +1,12 @@
+.meaningCard {
+	background-color: gainsboro;
+}
+
+.meaningCard .delete {
+	float: right;
+	color: red;
+}
+
+.meaningCard .delete:hover {
+	text-decoration: underline;
+}

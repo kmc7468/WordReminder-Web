@@ -34,9 +34,9 @@ const VocabularyPage = () => {
 	const deleteWord = (word) => () => {
 		axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/removeMeaning`, { vocabularyId: state.vocabulary.id, word: word.word, meaning: "*" }, { withCredentials: true })
 			.then((res) => {
-				const newMeaningCount = meanings.length - 1;
-				if (selectedWord >= newMeaningCount) {
-					setSelectedWord(newMeaningCount - 1);
+				const newWordCount = meanings.length - 1;
+				if (selectedWord >= newWordCount) {
+					setSelectedWord(newWordCount - 1);
 				}
 				
 				setMeanings(meanings.filter((w) => w.word !== word.word));
@@ -44,6 +44,28 @@ const VocabularyPage = () => {
 			.catch((err) => {
 				window.alert(`단어를 삭제하지 못했습니다.\n오류 메세지: '${ err }'`)
 			});
+	};
+
+	const deleteMeaning = (meaning) => () => {
+		const word = meanings[selectedWord];
+
+		if (word.meanings.length === 1) {
+			if (!window.confirm("이 뜻을 삭제하면 단어가 삭제됩니다. 그래도 삭제할까요?")) return;
+
+			deleteWord(word)();
+		} else {
+			axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/removeMeaning`, { vocabularyId: state.vocabulary.id, word: word.word, meaning: meaning.meaning }, { withCredentials: true })
+				.then((res) => {
+					setMeanings(meanings.map((w) => w !== word ? w : {
+						word: w.word,
+						meanings: w.meanings.filter((m) => m != meaning),
+						relations: w.relations,
+					}));
+				})
+				.catch((err) => {
+					window.alert(`뜻을 삭제하지 못했습니다.\n오류 메세지: '${ err }'`)
+				});
+		}
 	};
 
 	const categorizeRelations = (relations) => {
@@ -80,7 +102,7 @@ const VocabularyPage = () => {
 				<h2>세부 정보</h2>
 				<div className="content">
 					<h3>뜻 목록</h3>
-					{selectedWord !== -1 ? meanings[selectedWord].meanings.map((meaning) => <MeaningCard meaning={meaning} />) : <></>}
+					{selectedWord !== -1 ? meanings[selectedWord].meanings.map((meaning) => <MeaningCard meaning={meaning} deleteMeaning={deleteMeaning(meaning)} />) : <></>}
 					
 					<h3>관계 목록</h3>
 					{selectedWord !== -1 ? categorizeRelations(meanings[selectedWord].relations).map((relation) => <RelationCard relation={relation} />) : <></>}
