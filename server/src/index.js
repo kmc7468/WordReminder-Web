@@ -13,7 +13,7 @@ const port = process.env.PORT;
 app.use(cookies());
 app.use(express.json());
 
-const whitelist = [ "http://localhost:3000" ];
+const whitelist = [ process.env.FRONTEND_URI ];
 const corsOptions = {
 	origin: (origin, callback) => {
 		console.log("[REQUEST-CORS] Request from origin: ", origin);
