@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import "./MainPage.css";
+
 const MainPage = () => {
 	const [vocabularies, setVocabularies] = useState(null);
 
@@ -61,6 +63,18 @@ const MainPage = () => {
 		movePage("./vocabulary", { state: { vocabulary } });
 	};
 
+	const deleteVocabulary = (vocabulary) => () => {
+		if (!window.confirm("단어장을 삭제할까요? 작업은 되돌릴 수 없습니다.\n")) return;
+
+		axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/deleteVocabulary`, { vocabularyId: vocabulary.id }, { withCredentials: true })
+			.then((res) => {
+				setVocabularies(vocabularies.filter((voca) => voca.id !== vocabulary.id));
+			})
+			.catch((err) => {
+				window.alert(`단어장을 삭제하지 못했습니다.\n오류 메세지: '${ err }'`)
+			});
+	};
+
 	return (
 		<div className="MainPage">
 			{cookies.x_auth === undefined ? <Navigate to="./login" /> : <></>}
@@ -78,7 +92,7 @@ const MainPage = () => {
 
 			<div className="vocabularies">
 				<h3>단어장 목록</h3>
-				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li onClick={editVocabulary(voca)}>{voca.name}</li>) : <></>}</ul>
+				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li><p onClick={editVocabulary(voca)}>{voca.name}</p> <p className="delete" onClick={deleteVocabulary(voca)}>ⓧ</p></li>) : <></>}</ul>
 			</div>
 		</div>
 	);

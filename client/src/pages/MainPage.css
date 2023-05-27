@@ -1,0 +1,11 @@
+.vocabularies p {
+	display: inline-block;
+}
+
+.vocabularies p:hover {
+	text-decoration: underline;
+}
+
+.vocabularies .delete {
+	color: red;
+}
