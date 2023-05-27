@@ -21,7 +21,7 @@ const LoginPage = () => {
 			return;
 		}
 
-		axios.post("http://localhost:8080/account/login", { username, password }, { withCredentials: true })
+		axios.post(`${ process.env.REACT_APP_SERVER }/account/login`, { username, password }, { withCredentials: true })
 			.then((res) => {
 				movePage("../");
 			})

@@ -26,7 +26,7 @@ const ImportPage = () => {
 		formData.append("vocabularyName", name);
 		formData.append("file", file);
 
-		axios.post("http://localhost:8080/vocabulary/uploadVocabulary", formData, {
+		axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/uploadVocabulary`, formData, {
 			withCredentials: true,
 			headers: {
 				"Content-Type": "multipart/form-data",

@@ -11,7 +11,7 @@ const MainPage = () => {
 
 	useEffect(() => {
 		if (cookies.x_auth !== undefined && vocabularies === null) {
-			axios.get("http://localhost:8080/vocabulary/getVocabularies", { withCredentials: true })
+			axios.get(`${ process.env.REACT_APP_SERVER }/vocabulary/getVocabularies`, { withCredentials: true })
 				.then((res) => {
 					setVocabularies(res.data.vocabularies);
 				})
@@ -35,7 +35,7 @@ const MainPage = () => {
 		const name = window.prompt("단어장 이름:");
 		if (!name) return;
 
-		axios.post("http://localhost:8080/vocabulary/createVocabulary", { vocabularyName: name }, { withCredentials: true })
+		axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/createVocabulary`, { vocabularyName: name }, { withCredentials: true })
 			.then((res) => {
 				setVocabularies(vocabularies.concat([{
 					name,

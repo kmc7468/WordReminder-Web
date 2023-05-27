@@ -21,7 +21,7 @@ const RegisterPage = () => {
 			return;
 		}
 
-		axios.post("http://localhost:8080/account/register", { username, password })
+		axios.post(`${ process.env.REACT_APP_SERVER }/account/register`, { username, password })
 			.then((res) => {
 				window.alert("회원가입에 성공했습니다. 가입한 계정으로 로그인해 주세요.");
 
