@@ -92,7 +92,7 @@ const MainPage = () => {
 
 			<div className="vocabularies">
 				<h3>단어장 목록</h3>
-				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li><p onClick={editVocabulary(voca)}>{voca.name}</p> <p className="delete" onClick={deleteVocabulary(voca)}>ⓧ</p></li>) : <></>}</ul>
+				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li><p>{voca.name}</p> <p className="edit" onClick={editVocabulary(voca)}>ⓔ</p> <p className="delete" onClick={deleteVocabulary(voca)}>ⓧ</p></li>) : <></>}</ul>
 			</div>
 		</div>
 	);

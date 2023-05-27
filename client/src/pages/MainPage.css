@@ -6,6 +6,10 @@
 	text-decoration: underline;
 }
 
+.vocabularies .edit {
+	color: blue;
+}
+
 .vocabularies .delete {
 	color: red;
 }

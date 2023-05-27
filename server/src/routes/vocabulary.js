@@ -120,6 +120,14 @@ class VocabularyDB {
 		try {
 			const word = vocabulary.words.find((word) => word.word === wordString);
 			if (!word) return { success: false, code: 400, data: "Nonexist word" };
+
+			if (meaningString === "*") { // 단어 삭제(수동)
+				vocabulary.words = vocabulary.words.filter((word) => word.word !== wordString);
+
+				await vocabulary.save(); // TODO: 예외 처리 안됨
+
+				return { success: true };
+			}
 			
 			const meaningCount = word.meanings.length;
 

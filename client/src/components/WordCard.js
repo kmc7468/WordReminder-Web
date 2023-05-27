@@ -1,6 +1,6 @@
 import "./WordCard.css";
 
-const WordCard = ({ word, onClick }) => {
+const WordCard = ({ word, onClick, deleteWord }) => {
 	const title = word.word;
 	const pronunciation = word.meanings
 		.map((meaning) => meaning.pronunciation)
@@ -18,7 +18,7 @@ const WordCard = ({ word, onClick }) => {
 
 	return (
 		<div className="wordCard" onClick={onClick}>
-			<h3>{title}</h3>
+			<h3>{title} <p className="delete" onClick={deleteWord}>ⓧ</p></h3>
 			{pronunciation.length !== 0 ? <p>{`[${ pronunciation }]`}</p> : <></>}
 
 			<p>{meaning}</p>

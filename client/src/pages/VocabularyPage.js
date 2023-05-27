@@ -29,7 +29,22 @@ const VocabularyPage = () => {
 		}
 
 		return () => {};
-	}, [ meanings, selectedWord ]);
+	}, [ selectedWord, meanings ]);
+
+	const deleteWord = (word) => () => {
+		axios.post(`${ process.env.REACT_APP_SERVER }/vocabulary/removeMeaning`, { vocabularyId: state.vocabulary.id, word: word.word, meaning: "*" }, { withCredentials: true })
+			.then((res) => {
+				const newMeaningCount = meanings.length - 1;
+				if (selectedWord >= newMeaningCount) {
+					setSelectedWord(newMeaningCount - 1);
+				}
+				
+				setMeanings(meanings.filter((w) => w.word !== word.word));
+			})
+			.catch((err) => {
+				window.alert(`단어를 삭제하지 못했습니다.\n오류 메세지: '${ err }'`)
+			});
+	};
 
 	const categorizeRelations = (relations) => {
 		return relations
@@ -57,7 +72,7 @@ const VocabularyPage = () => {
 			<div className="words">
 				<h2>단어 목록</h2>
 				<div className="content">
-					{meanings !== null ? meanings.map((word) => <WordCard word={word} onClick={e => setSelectedWord(meanings.indexOf(word))} />) : <></>}
+					{meanings !== null ? meanings.map((word) => <WordCard word={word} onClick={e => setSelectedWord(meanings.indexOf(word))} deleteWord={deleteWord(word)} />) : <></>}
 				</div>
 			</div>
 
