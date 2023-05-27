@@ -6,7 +6,7 @@ import ImportPage from "./ImportPage";
 import MainPage from "./MainPage";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
-import VocabularyEditor from "./VocabularyEditor";
+import VocabularyPage from "./VocabularyPage";
 
 const App = () => {
 	return (
@@ -19,6 +19,7 @@ const App = () => {
 					<Route path="register" element={<RegisterPage />}></Route>
 
 					<Route path="import" element={<ImportPage />}></Route>
+					<Route path="vocabulary" element={<VocabularyPage />}></Route>
 				</Routes>
 			</BrowserRouter>
 		</div>

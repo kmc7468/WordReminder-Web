@@ -358,34 +358,31 @@ router.post("/removeMeaning", accountMiddleware, async (req, res) => {
 
 router.get("/getMeanings", accountMiddleware, async (req, res) => {
 	try {
-		const id = req.body.vocabularyId;
+		const id = req.query.vocabularyId;
 		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
 
 		const vocabulary = await vocabularyDBInst.get(id);
 		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
 
-		const words = [];
-
-		//if (vocabulary.data.words) {
-			for (let i = 0; i < vocabulary.data.words.length; ++i) {
-				const word = vocabulary.data.words[i];
-				const meanings = [];
-
-				for (let j = 0; j < word.meanings.length; ++j) {
-					meanings.push({
-						meaning: word.meanings[j].meaning,
-						pronunciation: word.meanings[j].pronunciation,
-						example: word.meanings[j].example,
-						tags: word.meanings[j].tags,
-					});
-				}
-
-				words.push({
-					word: word.word,
-					meanings,
-				});
-			}
-		//}
+		const words = vocabulary.data.words.map((word) => {
+			return {
+				word: word.word,
+				meanings: word.meanings.map((meaning) => {
+					return {
+						meaning: meaning.meaning,
+						pronunciation: meaning.pronunciation,
+						example: meaning.example,
+						tags: meaning.tags,
+					};
+				}),
+				relations: word.relations.map((relation) => {
+					return {
+						word: relation.word,
+						relation: relation.relation
+					};
+				}),
+			};
+		});
 
 		return res.status(200).json({ meanings: words });
 	} catch (e) {

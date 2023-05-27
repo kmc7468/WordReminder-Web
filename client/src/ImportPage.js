@@ -32,7 +32,11 @@ const ImportPage = () => {
 				"Content-Type": "multipart/form-data",
 			}})
 			.then((res) => {
-				movePage("../");
+				movePage("../vocabulary", { state: {
+					vocabulary: {
+						name,
+						id: res.data.id
+					} } });
 			})
 			.catch((err) => {
 				window.alert(`단어장을 가져오는데 실패했습니다.\n오류 메세지: '${ err }'`);

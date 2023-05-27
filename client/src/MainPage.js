@@ -42,7 +42,11 @@ const MainPage = () => {
 					id: res.data.id,
 				}]));
 
-				//TODO: MOVEPAGE
+				movePage("./vocabulary", { state: {
+					vocabulary: {
+						name,
+						id: res.data.id
+					} } });
 			})
 			.catch((err) => {
 				window.alert(`단어장을 만들지 못했습니다.\n오류 메세지: '${ err }'`)
@@ -51,6 +55,10 @@ const MainPage = () => {
 
 	const importVocabulary = () => {
 		movePage("./import");
+	};
+
+	const editVocabulary = (vocabulary) => () => {
+		movePage("./vocabulary", { state: { vocabulary } });
 	};
 
 	return (
@@ -70,7 +78,7 @@ const MainPage = () => {
 
 			<div className="vocabularies">
 				<h3>단어장 목록</h3>
-				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li>{voca.name}</li>) : <></>}</ul>
+				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li onClick={editVocabulary(voca)}>{voca.name}</li>) : <></>}</ul>
 			</div>
 		</div>
 	);
