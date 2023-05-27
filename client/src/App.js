@@ -2,11 +2,11 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import ImportPage from "./ImportPage";
-import MainPage from "./MainPage";
-import LoginPage from "./LoginPage";
-import RegisterPage from "./RegisterPage";
-import VocabularyPage from "./VocabularyPage";
+import ImportPage from "./pages/ImportPage";
+import MainPage from "./pages/MainPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import VocabularyPage from "./pages/VocabularyPage";
 
 const App = () => {
 	return (

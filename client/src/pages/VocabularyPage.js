@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Navigate, useLocation } from "react-router-dom";
 
-import WordCard from "./components/WordCard";
+import WordCard from "../components/WordCard";
 
 const VocabularyPage = () => {
 	const [meanings, setMeanings] = useState(null);
@@ -37,6 +37,7 @@ const VocabularyPage = () => {
 			</div>
 
 			<div className="words">
+				<h2>단어 목록</h2>
 				{meanings !== null ? meanings.map((word) => <WordCard word={word} />) : <></>}
 			</div>
 		</div>
