@@ -35,7 +35,6 @@ const ImportPage = () => {
 				movePage("../");
 			})
 			.catch((err) => {
-				window.alert(err.response);
 				window.alert(`단어장을 가져오는데 실패했습니다.\n오류 메세지: '${ err }'`);
 			});
 	};
@@ -58,7 +57,20 @@ const ImportPage = () => {
 				<input type="file" id="vocabulary" onChange={e => setFile(e.target.files[0])} />
 				<br />
 
-				<button type="button" id="upload" onClick={upload}>가져오기</button> 
+				<button type="button" id="upload" onClick={upload}>가져오기</button>
+			</div>
+
+			<div className="samples">
+				<h2>샘플 단어장 파일 다운로드</h2>
+				<strong>외부 반출을 금합니다.</strong>
+
+				<form action={`${ process.env.REACT_APP_SERVER }/static/WordMaster.kv`} method="GET">
+					<button type="submit">WordMaster.kv (11kiB)</button>
+				</form>
+
+				<form action={`${ process.env.REACT_APP_SERVER }/static/EBS.kv`} method="GET">
+					<button type="submit">EBS.kv (209kiB)</button>
+				</form>
 			</div>
 		</div>
 	);
