@@ -5,6 +5,7 @@ import { Navigate, useLocation } from "react-router-dom";
 
 import { randInt, randElement } from "../utility/Random";
 import MultipleChoice from "../components/MultipleChoice";
+import ShortAnswer from "../components/ShortAnswer";
 
 const QuestionPage = () => {
 	const [meanings, setMeanings] = useState(null);
@@ -96,7 +97,20 @@ const QuestionPage = () => {
 				window.alert("오답입니다. 다시 도전해 보세요.");
 			}
 		} else {
-			// TODO
+			if (question.type === "w2ms") {
+				if (question.answer.word.meanings.find((meaning) => meaning.meaning === userChoice)) {
+					setQuestion(generateQuestion());	
+				} else {
+					window.alert("오답입니다. 다시 도전해 보세요.");
+				}
+			} else if (question.type === "m2ws") {
+				const word = meanings.find((word) => word.word === userChoice);
+				if (word && word.meanings.find((meaning) => meaning.meaning === question.answer.meaning.meaning)) {
+					setQuestion(generateQuestion());
+				} else {
+					window.alert("오답입니다. 다시 도전해 보세요.");
+				}
+			}
 		}
 	};
 
@@ -111,7 +125,8 @@ const QuestionPage = () => {
 			{cookies.x_auth === undefined ? <Navigate to="../login" /> : <></>}
 
 			{question !== null && question.isMultipleChoice ? <MultipleChoice question={question} submit={submit} /> : <></>}
-		
+			{question !== null && !question.isMultipleChoice ? <ShortAnswer question={question} submit={submit} /> : <></>}
+
 			<button id="skip" onClick={skip}>스킵</button>
 		</div>
 	);
