@@ -1,15 +1,18 @@
-.vocabularies p {
-	display: inline-block;
+.tools {
+	width: 480px;
+	margin: 10px auto;
 }
 
-.vocabularies p:hover {
+.tools button {
+	width: 150px;
+	margin: 0 5px;
+}
+
+.crossPlatform a {
+	text-decoration: none;
+}
+
+.crossPlatform a:hover {
+	font-weight: bold;
 	text-decoration: underline;
-}
-
-.vocabularies .edit {
-	color: blue;
-}
-
-.vocabularies .delete {
-	color: red;
 }

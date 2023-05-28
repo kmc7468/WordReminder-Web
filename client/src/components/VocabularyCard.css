@@ -1,0 +1,25 @@
+.VocabularyCard {
+	background-color: gainsboro;
+	border-radius: 25px;
+	padding: 2px 35px;
+	margin-bottom: 10px;
+	width: 40%;
+}
+
+.VocabularyCard h3 {
+	margin-top: 0;
+}
+
+.VocabularyCard p {
+	margin: 0;
+}
+
+.VocabularyCard .tools {
+	width: 252px;
+	margin: 5px 0;
+}
+
+.VocabularyCard .tools button {
+	width: 80px;
+	margin: 0 2px;
+}

@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import "./MainPage.css";
+import VocabularyCard from "../components/VocabularyCard";
 
 const MainPage = () => {
 	const [vocabularies, setVocabularies] = useState(null);
@@ -26,12 +27,6 @@ const MainPage = () => {
 
 		return () => {};
 	}, [ vocabularies ]);
-
-	const logout = () => {
-		removeCookies("x_auth");
-
-		movePage("./login");
-	};
 
 	const createVocabulary = () => {
 		const name = window.prompt("단어장 이름:");
@@ -57,6 +52,12 @@ const MainPage = () => {
 
 	const importVocabulary = () => {
 		movePage("./import");
+	};
+
+	const logout = () => {
+		removeCookies("x_auth");
+
+		movePage("./login");
 	};
 
 	const editVocabulary = (vocabulary) => () => {
@@ -85,14 +86,25 @@ const MainPage = () => {
 			</div>
 
 			<div className="tools">
-				<button id="logout" onClick={logout}>로그아웃</button>
-				<button id="createVocabulary" onClick={createVocabulary}>단어장 만들기</button>
-				<button id="importVocabulary" onClick={importVocabulary}>단어장 파일 가져오기</button>
+				<button id="createVocabularyButton" onClick={createVocabulary}>빈 단어장 만들기</button>
+				<button id="importVocabularyButton" onClick={importVocabulary}>단어장 파일 가져오기</button>
+				<button id="logoutButton" onClick={logout}>로그아웃</button>
 			</div>
 
 			<div className="vocabularies">
-				<h3>단어장 목록</h3>
-				<ul>{vocabularies !== null ? vocabularies.map((voca) => <li><p onClick={e => movePage("./option", { state: { vocabulary: voca } })}>{voca.name}</p> <p className="edit" onClick={editVocabulary(voca)}>ⓔ</p> <p className="delete" onClick={deleteVocabulary(voca)}>ⓧ</p></li>) : <></>}</ul>
+				<h2>단어장 목록</h2>
+				{vocabularies !== null ? vocabularies.map((voca) => <VocabularyCard vocabulary={voca} start={() => movePage("./option", { state: { vocabulary: voca } })} edit={editVocabulary(voca)} remove={deleteVocabulary(voca)} />) : <></>}
+				{vocabularies !== null && vocabularies.length === 0 ? <p>저장된 단어장이 없습니다.</p> : <></>}
+			</div>
+
+			<div className="crossPlatform">
+				<h2>크로스 플랫폼</h2>
+				<p>WordReminder는 다른 플랫폼에서도 이용할 수 있습니다.</p>
+				<ul>
+					<li><a href="https://github.com/kmc7468/WordReminder">WordReminder for Windows</a></li>
+					<li><a href="https://github.com/kmc7468/WordReminder-Android">WordReminder for Android</a></li>
+					<li><a href="https://github.com/kmc7468/WordReminder-Web">WordReminder for Web</a> (현재 이용 중)</li>
+				</ul>
 			</div>
 		</div>
 	);
