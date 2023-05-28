@@ -28,6 +28,11 @@ const QuestionPage = () => {
 		};
 		const answer = randMeaning();
 
+		const hint = {
+			pronunciation: state.questionHint.pronunciation,
+			example: state.questionHint.example
+		};
+
 		if (isMultipleChoice) {
 			const choices = [ answer ];
 
@@ -65,8 +70,8 @@ const QuestionPage = () => {
 			choices[0] = choices[answerIndex];
 			choices[answerIndex] = answer;
 
-			return { type, isMultipleChoice, answer, answerIndex, choices };
-		} else return { type, isMultipleChoice, answer };
+			return { type, isMultipleChoice, answer, answerIndex, choices, hint };
+		} else return { type, isMultipleChoice, answer, hint };
 	};
 
 	useEffect(() => {

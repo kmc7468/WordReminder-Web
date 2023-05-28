@@ -1,10 +1,13 @@
 import { useState } from "react";
 
+import { generateHint, generateHintTag } from "../utility/QuestionHint";
+
 const ShortAnswer = ({ question, submit }) => {
 	const [answer, setAnswer] = useState("");
 
 	let title;
 	let from;
+	let hint = generateHint(question, question.answer);
 
 	if (question.type === "w2ms") {
 		title = "다음 단어의 뜻은?";
@@ -18,6 +21,7 @@ const ShortAnswer = ({ question, submit }) => {
 		<div className="ShortAnswer">
 			<h1>{title}</h1>
 			<h2>제시어: {from}</h2>
+			{hint.map((hint) => generateHintTag(hint))}
 
 			<input type="text" id="answer" placeholder="답안 입력..." onChange={e => setAnswer(e.target.value)} />
 			<button type="button" id="submit" onClick={() => submit(answer)}>제출</button>
