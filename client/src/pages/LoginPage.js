@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
+import "./LoginPage.css";
+
 const LoginPage = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -39,15 +41,12 @@ const LoginPage = () => {
 				</div>
 
 				<div className="login">
-					<strong>아이디: </strong>
-					<input type="text" id="username" placeholder="아이디..." onChange={e => setUsername(e.target.value)} />
-					<br />
+					<div className="field">
+						<div><strong>아이디: </strong><input type="text" id="username" placeholder="아이디..." onChange={e => setUsername(e.target.value)} /></div>
+						<div><strong>비밀번호: </strong><input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} /></div>
+					</div>
 
-					<strong>비밀번호: </strong>
-					<input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} />
-					<br />
-
-					<button type="button" id="login" onClick={login}>로그인</button>
+					<button id="loginButton" onClick={login}>로그인</button>
 				</div>
 
 				<div className="register">

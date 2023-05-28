@@ -1,0 +1,34 @@
+.login {
+	width: 410px;
+	height: 52px;
+
+	margin: 10px auto;
+}
+
+.login .field {
+	width: 300px;
+
+	float: left;
+}
+
+.login .field #username {
+	width: 239px;
+}
+
+.login .field #password {
+	width: 224px;
+}
+
+.login #loginButton {
+	width: 100px;
+	height: 52px;
+	margin-left: 10px;
+
+	float: right;
+}
+
+.register {
+	text-align: center;
+
+	margin: 10px 0;
+}

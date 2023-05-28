@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
+import "./RegisterPage.css";
+
 const RegisterPage = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -36,23 +38,26 @@ const RegisterPage = () => {
 		<div className="RegisterPage">
 			{cookies.x_auth === undefined ? (<>
 				<div className="title">
-				<h1>회원가입</h1>
-				<h3>회원가입 후 WordReminder Web의 모든 기능을 무료로 이용할 수 있습니다.</h3>
-				<h3>주의사항: 다른 사이트에서 사용한 비밀번호를 여기에서 사용하지 마세요.</h3>
-				<p>HTTPS가 아직 적용되지 않았기 때문에, 비밀번호를 서버로 전송할 때 암호화되지 않고 평문으로 전송됩니다. (서버에서는 암호화하여 안전하게 보관합니다.)</p>
-			</div>
+					<h1>회원가입</h1>
+					<h3>회원가입 후 WordReminder Web의 모든 기능을 무료로 이용할 수 있습니다.</h3>
+				</div>
 
-			<div className="register">
-				<strong>아이디: </strong>
-				<input type="text" id="username" placeholder="아이디..." onChange={e => setUsername(e.target.value)} />
-				<br />
+				<div className="register">
+					<div className="field">
+						<div><strong>아이디: </strong><input type="text" id="username" placeholder="아이디..." onChange={e => setUsername(e.target.value)} /></div>
+						<div><strong>비밀번호: </strong><input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} /></div>
+					</div>
 
-				<strong>비밀번호: </strong>
-				<input type="password" id="password" placeholder="비밀번호..." onChange={e => setPassword(e.target.value)} />
-				<br />
+					<button type="button" id="registerButton" onClick={register}>회원가입</button>
+				</div>
 
-				<button type="button" id="register" onClick={register}>회원가입</button>
-			</div>
+				<div className="warning">
+					<strong>주의사항</strong>
+					<ol>
+						<li>다른 사이트에서 사용한 비밀번호를 이곳에서 사용하지 마세요.</li>
+						<li>HTTPS가 적용되지 않았기 때문에, 통신 과정에서 비밀번호가 평문으로 전송됩니다.<br />하지만, 서버에서는 비밀번호를 암호화하여 안전하게 보관하고 있습니다.</li>
+					</ol>
+				</div>
 			</>) : (<>
 				<div className="title">
 					<h1>회원가입</h1>
