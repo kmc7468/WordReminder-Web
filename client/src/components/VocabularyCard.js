@@ -8,9 +8,9 @@ const VocabularyCard = ({ vocabulary, start, edit, remove }) => {
 
 	useEffect(() => {
 		if (wordCount === -1) {
-			axios.get(`${ process.env.REACT_APP_SERVER }/vocabulary/getMeanings?vocabularyId=${ vocabulary.id }`, { withCredentials: true })
+			axios.get(`${ process.env.REACT_APP_SERVER }/vocabulary/getMeaningsCount?vocabularyId=${ vocabulary.id }`, { withCredentials: true })
 				.then((res) => {
-					setWordCount(res.data.meanings.length);
+					setWordCount(res.data.count);
 				})
 				.catch((err) => {
 					window.alert(`단어장을 불러오는데 실패했습니다.\n오류 메세지: '${ err }'`);

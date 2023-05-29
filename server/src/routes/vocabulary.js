@@ -400,4 +400,20 @@ router.get("/getMeanings", accountMiddleware, async (req, res) => {
 	}
 });
 
+router.get("/getMeaningsCount", accountMiddleware, async (req, res) => {
+	try {
+		const id = req.query.vocabularyId;
+		if (!id || id.length === 0) return res.status(400).json({ error: "Empty vocabularyId" });
+
+		const vocabulary = await vocabularyDBInst.get(id);
+		if (!vocabulary.success) return res.status(vocabulary.code).json({ error: vocabulary.data });
+
+		return res.status(200).json({ count: vocabulary.data.words.length });
+	} catch (e) {
+		console.log(`[VocabularyRouter] getMeaningsCount call failed: ${ e }`);
+
+		return res.status(500).json({ error: e });
+	}
+});
+
 module.exports = router;
