@@ -154,47 +154,34 @@ const VocabularyPage = () => {
 			
 			<div className="title">
 				<h1>단어장 편집하기</h1>
-				<h3>이름: {state.vocabulary.name}</h3>
+				<h3>단어장 이름: {state.vocabulary.name}</h3>
 			</div>
 
 			<div className="words">
 				<h2>단어 목록</h2>
-				<div className="content">
-					{meanings !== null ? meanings.map((word) => <WordCard word={word} onClick={e => updateSelectedWord(meanings.indexOf(word))} deleteWord={deleteWord(word)} />) : <></>}
-				</div>
+				{meanings !== null ? meanings.map((word) => <WordCard word={word} isSelected={selectedWord === meanings.indexOf(word)} onClick={e => updateSelectedWord(meanings.indexOf(word))} deleteWord={deleteWord(word)} />) : <></>}
+				{meanings !== null && meanings.length === 0 ? <p>단어가 없습니다.</p> : <></>}
 			</div>
 
 			<div className="word">
 				<h2>세부 정보</h2>
-				<div className="content">
-					<h3>뜻 목록</h3>
-					{selectedWord !== -1 ? meanings[selectedWord].meanings.map((meaning) => <MeaningCard meaning={meaning} deleteMeaning={deleteMeaning(meaning)} />) : <></>}
-					<div className="newMeaning">
-						<strong>새로운 단어/뜻</strong>
-						<br />
-						
-						<strong>단어: </strong>
-						<input type="text" id="word" placeholder="단어..." onChange={e => setNewWord(e.target.value)} ref={wordRef} />
-						<br />
-						
-						<strong>뜻: </strong>
-						<input type="text" id="meaning" placeholder="뜻..." onChange={e => setNewMeaning(e.target.value)} />
-						<br />
+				<h3>뜻 목록</h3>
+				{selectedWord !== -1 ? meanings[selectedWord].meanings.map((meaning) => <MeaningCard meaning={meaning} deleteMeaning={deleteMeaning(meaning)} />) : <></>}
 
-						<strong>발음: </strong>
-						<input type="text" id="pronunciation" placeholder="발음..." onChange={e => setNewPronunciation(e.target.value)} />
-						<br />
+				<div className="newMeaning">
+					<div className="subTitle"><strong>새로운 단어/뜻</strong></div>
 
-						<strong>예문: </strong>
-						<input type="text" id="example" placeholder="예문..." onChange={e => setNewExample(e.target.value)} />
-						<br />
+					<div>단어: <input type="text" id="word" placeholder="단어..." onChange={e => setNewWord(e.target.value)} ref={wordRef} /></div>
+					<div>뜻: <input type="text" id="meaning" placeholder="뜻..." onChange={e => setNewMeaning(e.target.value)} /></div>
+					<div>발음: <input type="text" id="pronunciation" placeholder="발음..." onChange={e => setNewPronunciation(e.target.value)} /></div>
+					<div>예문: <input type="text" id="example" placeholder="예문..." onChange={e => setNewExample(e.target.value)} /></div>
 
-						<button type="button" id="add" onClick={addMeaning}>추가</button>
-					</div>
-
-					<h3>관계 목록</h3>
-					{selectedWord !== -1 ? categorizeRelations(meanings[selectedWord].relations).map((relation) => <RelationCard relation={relation} />) : <></>}
+					<button type="button" id="add" onClick={addMeaning}>추가</button>
 				</div>
+
+				<h3>관계 목록</h3>
+				{selectedWord !== -1 ? categorizeRelations(meanings[selectedWord].relations).map((relation) => <RelationCard relation={relation} />) : <></>}
+				{selectedWord === -1 || meanings.length === 0 || meanings[selectedWord].relations.length === 0 ? <p>관계가 없습니다.</p> : <></>}
 			</div>
 		</div>
 	);

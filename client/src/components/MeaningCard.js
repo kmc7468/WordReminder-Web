@@ -6,10 +6,10 @@ const MeaningCard = ({ meaning, deleteMeaning }) => {
 		.join(" ");
 
 	return (
-		<div className="meaningCard">
-			<strong>{meaning.meaning} <p className="delete" onClick={deleteMeaning}>ⓧ</p></strong>
-			
-			{meaning.pronunciation !== null ? <p>{`[${ meaning.pronunciation }]`}</p> : <></>}
+		<div className="MeaningCard">
+			<strong>{meaning.meaning} <div className="delete" onClick={deleteMeaning}>ⓧ</div></strong>
+			{meaning.pronunciation !== null ? <p className="pronunciation">{`[${ meaning.pronunciation }]`}</p> : <></>}
+
 			{meaning.example !== null ? <p>예문: {meaning.example}</p> : <></>}
 			{tag.length !== 0 ? <p>{tag}</p> : <></>}
 		</div>

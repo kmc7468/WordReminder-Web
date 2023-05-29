@@ -1,12 +1,41 @@
-.wordCard {
-	background-color: lightgray;
+.WordCard {
+	background-color: gainsboro;
+	border-radius: 25px;
+	padding: 2px 35px;
+	margin-top: 0px;
+	margin-bottom: 5px;
 }
 
-.wordCard .delete {
+.WordCard:hover {
+	background-color: rgba(190, 190, 190);
+}
+
+.WordCard h3 {
+	margin: 0;
+}
+
+.WordCard p {
+	margin-bottom: 0;
+}
+
+.WordCard .pronunciation {
+	font-size: 10pt;
+
+	margin-top: 0;
+}
+
+.WordCard .relation {
+	font-size: 10pt;
+
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.WordCard .delete {
 	float: right;
 	color: red;
 }
 
-.wordCard .delete:hover {
+.WordCard .delete:hover {
 	text-decoration: underline;
 }

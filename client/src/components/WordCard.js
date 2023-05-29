@@ -1,6 +1,6 @@
 import "./WordCard.css";
 
-const WordCard = ({ word, onClick, deleteWord }) => {
+const WordCard = ({ word, isSelected, onClick, deleteWord }) => {
 	const title = word.word;
 	const pronunciation = word.meanings
 		.map((meaning) => meaning.pronunciation)
@@ -17,14 +17,14 @@ const WordCard = ({ word, onClick, deleteWord }) => {
 		.join(", ");
 
 	return (
-		<div className="wordCard" onClick={onClick}>
-			<h3>{title} <p className="delete" onClick={deleteWord}>ⓧ</p></h3>
-			{pronunciation.length !== 0 ? <p>{`[${ pronunciation }]`}</p> : <></>}
+		<div className="WordCard" onClick={onClick} style={isSelected ? { backgroundColor: "rgb(160, 160, 160)" } : {}}>
+			<h3>{title} <div className="delete" onClick={deleteWord}>ⓧ</div></h3>
+			{pronunciation.length !== 0 ? <p className="pronunciation">{`[${ pronunciation }]`}</p> : <></>}
 
 			<p>{meaning}</p>
 
-			{example.length !== 0 ? <em>{example}</em> : <></>}
-			{word.relations.length !== 0 ? word.relations.map((relation) => <p><em>({relation.relation})</em> {relation.word}</p>) : <></>}
+			{example.length !== 0 ? <p><em>{example}</em></p> : <></>}
+			{word.relations.length !== 0 ? <p>{word.relations.map((relation) => <p className="relation"><em>({relation.relation})</em> {relation.word}</p>)}</p> : <></>}
 		</div>
 	);
 };

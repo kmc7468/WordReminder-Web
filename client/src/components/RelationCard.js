@@ -1,8 +1,11 @@
+import "./RelationCard.css";
+
 const RelationCard = ({ relation }) => {
 	return (
-		<div className="relationCard">
-			<strong>{relation.relation}</strong>
-			{relation.words.map((word) => <p>{word}</p>)}
+		<div className="RelationCard">
+			<div className="subTitle"><strong>{relation.relation}</strong></div>
+			
+			{relation.words.map((word) => <div>{word}</div>)}
 		</div>
 	);
 };

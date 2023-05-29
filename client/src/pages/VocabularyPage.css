@@ -1,14 +1,50 @@
 .words {
 	float: left;
 	width: 40%;
+	padding-left: 15px;
+	padding-right: 5px;
+	box-sizing: border-box;
 }
 
 .word {
 	float: right;
 	width: 60%;
+	padding-left: 5px;
+	padding-right: 15px;
+	box-sizing: border-box;
 }
 
 .word .newMeaning {
-	margin-top: 10px;
 	background-color: gainsboro;
+	border-radius: 25px;
+	padding: 2px 35px;
+}
+
+.word .newMeaning .subTitle {
+	margin-bottom: 10px;
+}
+
+.word .newMeaning div {
+	width: 300px;
+}
+
+.word .newMeaning #word {
+	width: 253px;
+}
+
+.word .newMeaning #meaning {
+	width: 268px;
+}
+
+.word .newMeaning #pronunciation {
+	width: 253px;
+}
+
+.word .newMeaning #example {
+	width: 253px;
+}
+
+.word .newMeaning #add {
+	width: 80px;
+	margin-top: 10px;
 }

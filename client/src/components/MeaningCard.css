@@ -1,12 +1,27 @@
-.meaningCard {
+.MeaningCard {
 	background-color: gainsboro;
+	border-radius: 25px;
+	padding: 2px 35px;
+	margin-top: 0px;
+	margin-bottom: 5px;
 }
 
-.meaningCard .delete {
+.MeaningCard .pronunciation {
+	font-size: 10pt;
+
+	margin-top: 0;
+}
+
+.MeaningCard p {
+	margin-top: 5px;
+	margin-bottom: 0;
+}
+
+.MeaningCard .delete {
 	float: right;
 	color: red;
 }
 
-.meaningCard .delete:hover {
+.MeaningCard .delete:hover {
 	text-decoration: underline;
 }
