@@ -75,6 +75,10 @@ const ImportPage = () => {
 				<form action={`${ process.env.REACT_APP_SERVER }/static/EBS.kv`} method="GET">
 					<button type="submit">EBS.kv (209kiB)</button>
 				</form>
+
+				<form action={`${ process.env.REACT_APP_SERVER }/static/Hanja.kv`} method="GET">
+					<button type="submit">Hanja.kv (1kiB)</button>
+				</form>
 			</div>
 		</div>
 	);
