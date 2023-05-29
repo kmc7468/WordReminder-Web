@@ -95,7 +95,7 @@ const VocabularyPage = () => {
 
 					setSelectedWord(meanings.length);
 				} else {
-					setMeanings(meanings.map((w) => w !== meanings[selectedWord] ? w : {
+					setMeanings(meanings.map((w) => w.word !== newWord ? w : {
 						word: w.word,
 						meanings: w.meanings.concat([{
 							meaning: newMeaning,
@@ -105,6 +105,7 @@ const VocabularyPage = () => {
 						}]),
 						relations: w.relations,
 					}));
+					setSelectedWord(meanings.findIndex((w) => w.word === newWord));
 				}
 			})
 			.catch((err) => {
